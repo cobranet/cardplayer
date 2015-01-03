@@ -1,5 +1,5 @@
 class Card
-  @@SUITS = %w(SPADE DIAMOND HEARD CLUB)
+  @@SUITS = %w(SPADE DIAMOND HEART CLUB)
   @@VALUES = %w(A 2 3 4 5 6 7 8 9 10 J Q K)
   @@UNICODE_SUITS = %w( &#x2660 &#x2666 &#x2764 &#x2663) 
   @@CLASS_STR = %w(ace two three four five six seven eight nine ten jack queen king)
