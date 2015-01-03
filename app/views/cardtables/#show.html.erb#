@@ -1,5 +1,0 @@
-<div id="cardtable">
-  <%  13.times do |x| %>
- <%= Card.new(x+1).make_div %>
-<% end %>
-</div>

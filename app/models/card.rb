@@ -4,6 +4,7 @@ class Card
   @@UNICODE_SUITS = %w( &#x2660 &#x2666 &#x2764 &#x2663) 
   @@CLASS_STR = %w(ace two three four five six seven eight nine ten jack queen king)
   @@SHORT_SUITS = %w(S D H C)
+  @@MAJORS = %w(jack queen king)
   @@POSITIONS = [ 
     ["middle_center"], #A
 
@@ -42,12 +43,16 @@ class Card
   def unicode_suit
     @@UNICODE_SUITS[@suit_num]
   end
-
+  
+  def cimage
+    ActionController::Base.helpers.image_path("/assets/faces/face-#{@@MAJORS[@value_num-10]}-#{@suit.downcase}.png")
+  end
 
   def make_div
     div = "" 
-    div = 
-      "<div class='card #{html_class_str} #{@suit.downcase}'>\n" + 
+    div =
+      "<div class='card'>" + 
+      "<div class='card-#{html_class_str} #{@suit.downcase}'>\n" + 
       "  <div class='corner top'>\n" +
       "    <span class='number'>#{@value}</span>\n" +
       "    <span>#{unicode_suit}</span>\n" +
@@ -57,13 +62,18 @@ class Card
         div = div + 
         "  <span class='suit #{pos}'>#{unicode_suit}</span>\n"
       end 
+    else
+      div = div + "\n" +
+        "  <span class='face middle_center'>\n" +
+        "    <img src='#{cimage}'></img>\n" + 
+        "  </span>" 
     end
     div = div + "\n" +
       "  <div class='corner bottom'>\n" +
       "    <span class='number'>#{@value}</span>\n" + 
       "    <span>#{unicode_suit}</span>\n" +
       "  </div>\n"
-     div =div + "\n" + "</div>"         
+     div =div + "\n" + "</div>\n</div>"         
      div.html_safe
   end
 
