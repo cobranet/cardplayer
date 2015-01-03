@@ -48,10 +48,10 @@ class Card
     ActionController::Base.helpers.image_path("/assets/faces/face-#{@@MAJORS[@value_num-10]}-#{@suit.downcase}.png")
   end
 
-  def make_div
+  def make_div(id)
     div = "" 
     div =
-      "<div class='card'>" + 
+      "<div id='card#{id}' class='card'>" + 
       "<div class='card-#{html_class_str} #{@suit.downcase}'>\n" + 
       "  <div class='corner top'>\n" +
       "    <span class='number'>#{@value}</span>\n" +
