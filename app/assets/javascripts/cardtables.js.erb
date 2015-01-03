@@ -1,9 +1,72 @@
-$(document).ready(function(){
-    var ele = $("#card11");
-    ele.snabbt(
-	{
-	position: [150, 0, 0],
-	rotation: [0, 0, Math.PI / 2],
-    });
+ var CP = { 
+     divs:  [
+    "<%= Card.new(1).make_div %>",
+    "<%= Card.new(2).make_div %>",
+    "<%= Card.new(3).make_div %>",
+    "<%= Card.new(4).make_div %>",
+    "<%= Card.new(5).make_div %>",
+    "<%= Card.new(6).make_div %>",
+    "<%= Card.new(7).make_div %>",
+    "<%= Card.new(8).make_div %>",
+    "<%= Card.new(9).make_div %>",
+    "<%= Card.new(10).make_div %>",
+    "<%= Card.new(11).make_div %>",
+    "<%= Card.new(12).make_div %>",
+    "<%= Card.new(13).make_div %>",
+    "<%= Card.new(14).make_div %>",
+    "<%= Card.new(15).make_div %>",
+    "<%= Card.new(16).make_div %>",
+    "<%= Card.new(17).make_div %>",
+    "<%= Card.new(18).make_div %>",
+    "<%= Card.new(19).make_div %>",
+    "<%= Card.new(20).make_div %>",
+    "<%= Card.new(21).make_div %>",
+    "<%= Card.new(22).make_div %>",
+    "<%= Card.new(23).make_div %>",
+    "<%= Card.new(24).make_div %>",
+    "<%= Card.new(25).make_div %>",
+    "<%= Card.new(26).make_div %>",
+    "<%= Card.new(27).make_div %>",
+    "<%= Card.new(28).make_div %>",
+    "<%= Card.new(29).make_div %>",
+    "<%= Card.new(30).make_div %>",
+    "<%= Card.new(31).make_div %>",
+    "<%= Card.new(32).make_div %>",
+    "<%= Card.new(33).make_div %>",
+    "<%= Card.new(34).make_div %>",
+    "<%= Card.new(35).make_div %>",
+    "<%= Card.new(36).make_div %>",
+    "<%= Card.new(37).make_div %>",
+    "<%= Card.new(38).make_div %>",
+    "<%= Card.new(39).make_div %>",
+    "<%= Card.new(40).make_div %>",
+    "<%= Card.new(41).make_div %>",
+    "<%= Card.new(42).make_div %>",
+    "<%= Card.new(43).make_div %>",
+    "<%= Card.new(44).make_div %>",
+    "<%= Card.new(45).make_div %>",
+    "<%= Card.new(46).make_div %>",
+    "<%= Card.new(47).make_div %>",
+    "<%= Card.new(48).make_div %>",
+    "<%= Card.new(49).make_div %>",
+    "<%= Card.new(50).make_div %>",
+    "<%= Card.new(51).make_div %>",
+    "<%= Card.new(52).make_div %>"],
+     make_div: function(card_id,ele_id) {
+	return "<div class='card' id='" + ele_id + "'>" + CP.divs[card_id-1] +  "</div>";
+    }
+ };
 
-});
+ $(document).ready(function(){
+     var ele = $("#cardtable");
+     ele.append(CP.make_div(1,"braca"));
+     ele.append(CP.make_div(23,"braca2"));
+     ele.append(CP.make_div(11,"braca23"));
+     ele.append(CP.make_div(52,"braca55"));
+     ele.append(CP.make_div(22,"braca35"));
+     // ele.snabbt(
+     // 	{
+     // 	position: [0, 0, 0],
+     // 	rotation: [0, 0, Math.PI / 2],
+     // });
+ });

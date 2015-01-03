@@ -48,32 +48,31 @@ class Card
     ActionController::Base.helpers.image_path("/assets/faces/face-#{@@MAJORS[@value_num-10]}-#{@suit.downcase}.png")
   end
 
-  def make_div(id)
+  def make_div
     div = "" 
     div =
-      "<div id='card#{id}' class='card'>" + 
-      "<div class='card-#{html_class_str} #{@suit.downcase}'>\n" + 
-      "  <div class='corner top'>\n" +
-      "    <span class='number'>#{@value}</span>\n" +
-      "    <span>#{unicode_suit}</span>\n" +
-      "  </div>\n"
+      "<div class='card-#{html_class_str} #{@suit.downcase}'>" + 
+      "  <div class='corner top'>" +
+      "    <span class='number'>#{@value}</span>" +
+      "    <span>#{unicode_suit}</span>" +
+      "  </div>"
     if @value_num < 10 
       @@POSITIONS[@value_num].each do |pos| 
         div = div + 
-        "  <span class='suit #{pos}'>#{unicode_suit}</span>\n"
+        "  <span class='suit #{pos}'>#{unicode_suit}</span>"
       end 
     else
-      div = div + "\n" +
-        "  <span class='face middle_center'>\n" +
-        "    <img src='#{cimage}'></img>\n" + 
+      div = div + "" +
+        "  <span class='face middle_center'>" +
+        "    <img src='#{cimage}'></img>" + 
         "  </span>" 
     end
-    div = div + "\n" +
-      "  <div class='corner bottom'>\n" +
-      "    <span class='number'>#{@value}</span>\n" + 
-      "    <span>#{unicode_suit}</span>\n" +
-      "  </div>\n"
-     div =div + "\n" + "</div>\n</div>"         
+    div = div + "" +
+      "  <div class='corner bottom'>" +
+      "    <span class='number'>#{@value}</span>" + 
+      "    <span>#{unicode_suit}</span>" +
+      "  </div>"
+     div =div + "" + "</div>"         
      div.html_safe
   end
 
