@@ -51,22 +51,31 @@
     "<%= Card.new(49).make_div %>",
     "<%= Card.new(50).make_div %>",
     "<%= Card.new(51).make_div %>",
-    "<%= Card.new(52).make_div %>"],
-     make_div: function(card_id,ele_id) {
-	return "<div class='card' id='" + ele_id + "'>" + CP.divs[card_id-1] +  "</div>";
-    }
+    "<%= Card.new(52).make_div %>",
+    "<%= Card.make_back %>",	 
+     ]     ,
+     make_div: function(card_id,ele_id,visible) {
+	if (visible === true ) {
+	  return "<div class='card' id='" + ele_id + "'>" + CP.divs[card_id-1] +  "</div>";
+	} else {
+	  return "<div class='card' id='" + ele_id + "'>" + CP.divs[52] +  "</div>";
+	};
+     }
  };
 
  $(document).ready(function(){
      var ele = $("#cardtable");
-     ele.append(CP.make_div(1,"braca"));
-     ele.append(CP.make_div(23,"braca2"));
-     ele.append(CP.make_div(11,"braca23"));
-     ele.append(CP.make_div(52,"braca55"));
-     ele.append(CP.make_div(22,"braca35"));
-     // ele.snabbt(
-     // 	{
-     // 	position: [0, 0, 0],
-     // 	rotation: [0, 0, Math.PI / 2],
-     // });
+     ele.append(CP.make_div(1,"braca",true));
+     ele.append(CP.make_div(23,"braca2",false));
+     ele.append(CP.make_div(11,"braca23",true));
+     ele.append(CP.make_div(52,"braca55",true));
+     ele.append(CP.make_div(22,"braca35",true));
+     c1 = $("#braca2");
+     for (var i=1; i< 30; i++) {
+     c1.snabbt(
+      	{
+      	position: [0, 0, 0],
+      	    rotation: [0 , 0, Math.PI / 3],
+      });
+     }
  });
