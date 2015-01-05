@@ -52,7 +52,7 @@ class Card
     div = ""
     div = 
       "<div class='card-back'>" +
-        "  <span class='face middle_center'>" +
+        "  <span class='middle_center'>" +
         "    <img src='#{ActionController::Base.helpers.image_path("/assets/back.png")}'></img>" + 
         "  </span>" +
       "</div>"

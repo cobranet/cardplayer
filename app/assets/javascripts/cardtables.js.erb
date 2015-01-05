@@ -52,30 +52,44 @@
     "<%= Card.new(50).make_div %>",
     "<%= Card.new(51).make_div %>",
     "<%= Card.new(52).make_div %>",
-    "<%= Card.make_back %>",	 
-     ]     ,
-     make_div: function(card_id,ele_id,visible) {
-	if (visible === true ) {
-	  return "<div class='card' id='" + ele_id + "'>" + CP.divs[card_id-1] +  "</div>";
-	} else {
-	  return "<div class='card' id='" + ele_id + "'>" + CP.divs[52] +  "</div>";
-	};
+    "<%= Card.make_back %>"	 
+     ],
+     create_card: function(card_id,visible,element_id,position){
+	 var card = {
+	     card_id: card_id,
+	     visible: visible,
+	     position: position,
+	     element_id: element_id,
+	     make_div: function() {
+		 if (visible === true ) {
+		     return "<div class='card' id='" + element_id + "'>" + CP.divs[card_id-1] +  "</div>";
+		 } else {
+		     return "<div class='card' id='" + element_id + "'>" + CP.divs[52] +  "</div>";
+		 };
+	     },
+	     get_div: function() {
+		 return $('#' + element_id);
+		 },
+	     show: function(parent,z){
+		 console.log(this.make_div());
+		 parent.prepend(this.make_div());
+		 this.get_div().css({position: "absolute"}).css({left:position.x + "px",tip:position.y+"px",zIndex:z})
+	     }
+	 }
+	  return card;
      }
- };
+};
 
  $(document).ready(function(){
      var ele = $("#cardtable");
-     ele.append(CP.make_div(1,"braca",true));
-     ele.append(CP.make_div(23,"braca2",false));
-     ele.append(CP.make_div(11,"braca23",true));
-     ele.append(CP.make_div(52,"braca55",true));
-     ele.append(CP.make_div(22,"braca35",true));
-     c1 = $("#braca2");
-     for (var i=1; i< 30; i++) {
-     c1.snabbt(
-      	{
-      	position: [0, 0, 0],
-      	    rotation: [0 , 0, Math.PI / 3],
-      });
-     }
+     ele.css({position: 'relative'});
+     var cards = [];
+     for (var i=1; i<53; i++){
+	 cards[i] = CP.create_card(i,true,"c"+i,{x: 100+20*i,y: 100});
+	 cards[i].show(ele,i);
+     };
+     cards[12].get_div().snabbt({ position:[110,200,0]});
+     
+//     $('#' + "some_thing_else").snabbt({ position:[110,0,0]});
+//     $('#' + "as_spade").snabbt({ position:[110,0,0]});
  });
