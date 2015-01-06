@@ -54,14 +54,13 @@
     "<%= Card.new(52).make_div %>",
     "<%= Card.make_back %>"	 
      ],
-     create_card: function(card_id,visible,element_id,position){
+     create_card: function(card_id,element_id,position){
 	 var card = {
 	     card_id: card_id,
-	     visible: visible,
 	     position: position,
 	     element_id: element_id,
 	     make_div: function() {
-		 if (visible === true ) {
+		 if (this.card_id != 53 ) {
 		     return "<div class='card' id='" + element_id + "'>" + CP.divs[card_id-1] +  "</div>";
 		 } else {
 		     return "<div class='card' id='" + element_id + "'>" + CP.divs[52] +  "</div>";
@@ -71,25 +70,36 @@
 		 return $('#' + element_id);
 		 },
 	     show: function(parent,z){
-		 console.log(this.make_div());
+		 this.get_div().remove();
 		 parent.prepend(this.make_div());
-		 this.get_div().css({position: "absolute"}).css({left:position.x + "px",tip:position.y+"px",zIndex:z})
+		 console.log(position);
+		 this.get_div().css({position: "absolute"}).css({left:position.x + "px",top:position.y+"px",zIndex:z})
+	     },
+	     flip: function(){
+		 this.card_id = 53;
+		 },
+	     move_to: function(position) {
+		 this.position = {x: position.x-this.position.x,
+				  y: position.y-this.position.y};
+		 console.log("Move to " + this.position.x);
+		 console.log("Move to " + this.position.y);
+		 this.get_div().snabbt({position:[this.position.x,this.position.y,0]});
+		 console.log(this.get_div());
 	     }
-	 }
+	 };
 	  return card;
      }
-};
+ };
 
- $(document).ready(function(){
+
+$(document).ready(function(){
      var ele = $("#cardtable");
      ele.css({position: 'relative'});
      var cards = [];
-     for (var i=1; i<53; i++){
-	 cards[i] = CP.create_card(i,true,"c"+i,{x: 100+20*i,y: 100});
-	 cards[i].show(ele,i);
+     for (var i=1; i<54; i++){
+        cards[i] = CP.create_card(i,"c"+i,{x: 100+20*i,y: 100});
+        cards[i].show(ele,i)
+	console.log(cards[i].element_id);
      };
-     cards[12].get_div().snabbt({ position:[110,200,0]});
-     
-//     $('#' + "some_thing_else").snabbt({ position:[110,0,0]});
-//     $('#' + "as_spade").snabbt({ position:[110,0,0]});
- });
+     cards[14].get_div().snabbt({ position:[110,200,0]});
+});
