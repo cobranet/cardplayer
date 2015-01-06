@@ -88,6 +88,14 @@
 	     }
 	 };
 	  return card;
+     },
+     create_stack: function(position,type,dif){
+	 var stack = {
+	     position: position,
+	     type: type,
+	     dif: dif
+	 };
+	 return stack;
      }
  };
 
@@ -99,7 +107,10 @@ $(document).ready(function(){
      for (var i=1; i<54; i++){
         cards[i] = CP.create_card(i,"c"+i,{x: 100+20*i,y: 100});
         cards[i].show(ele,i)
-	console.log(cards[i].element_id);
      };
      cards[14].get_div().snabbt({ position:[110,200,0]});
+     cards[15].get_div().snabbt({ position:[110,200,0]});
+     cards[15].move_to({x: 400, y:300});
+     cards[1].move_to({x: 600, y:300});
+      
 });
