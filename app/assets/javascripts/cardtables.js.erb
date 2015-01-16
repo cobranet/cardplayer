@@ -1,4 +1,12 @@
- var CP = { 
+var table = { 
+    stacks: [ { diff: 20,  position: { x:10, y:10}, cards:[1,12,45,18]},
+	      { diff: 20,  position: { x:10, y:200}, cards: [11,13,33,34]}
+	    ]
+	
+  };
+ 
+var CP = { 
+     font_size: "4px",
      divs:  [
     "<%= Card.new(1).make_div %>",
     "<%= Card.new(2).make_div %>",
@@ -93,7 +101,11 @@
 	 var stack = {
 	     position: position,
 	     type: type,
-	     dif: dif
+	     dif: dif,
+	     cards: [],
+	     add_card: function(card_id){
+		 cards.push(card_id);
+	     }
 	 };
 	 return stack;
      }
@@ -102,6 +114,7 @@
 
 $(document).ready(function(){
      var ele = $("#cardtable");
+     ele.css({"font-size": CP.font_size }); 
      ele.css({position: 'relative'});
      var cards = [];
      for (var i=1; i<54; i++){
@@ -109,7 +122,9 @@ $(document).ready(function(){
         cards[i].show(ele,i)
      };
      cards[14].get_div().snabbt({ position:[110,200,0]});
-     cards[15].get_div().snabbt({ position:[110,200,0]});
+     cards[9].get_div().snabbt({ position:[110,200,100]});
+     cards[15].font_size="8px";
+     card[15].show();
      cards[15].move_to({x: 400, y:300});
      cards[1].move_to({x: 600, y:300});
       
