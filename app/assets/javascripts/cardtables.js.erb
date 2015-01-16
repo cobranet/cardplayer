@@ -1,13 +1,6 @@
-var table = { 
-    stacks: [ { diff: 20,  position: { x:10, y:10}, cards:[1,12,45,18]},
-	      { diff: 20,  position: { x:10, y:200}, cards: [11,13,33,34]}
-	    ]
-	
-  };
- 
-var CP = { 
-     font_size: "4px",
-     divs:  [
+var CP = ( function(){
+     var font_size = "4px";
+     var divs = [
     "<%= Card.new(1).make_div %>",
     "<%= Card.new(2).make_div %>",
     "<%= Card.new(3).make_div %>",
@@ -61,71 +54,71 @@ var CP = {
     "<%= Card.new(51).make_div %>",
     "<%= Card.new(52).make_div %>",
     "<%= Card.make_back %>"	 
-     ],
-     create_card: function(card_id,element_id,position){
-	 var card = {
-	     card_id: card_id,
-	     position: position,
-	     element_id: element_id,
+     ];
+     return { 
+         create_card: function(card_id,element_id,position){
+	     var card = {
+	         card_id: card_id,
+		 x: position.x,
+		 y: position.y,
+		 element_id: element_id,
+		 selected: false,
+             inspect: function(){
+		 console.log('inspect');
+		 console.log("x: " + this.x + "  " + "y: " + this.y);  
+	     },
 	     make_div: function() {
 		 if (this.card_id != 53 ) {
-		     return "<div class='card' id='" + element_id + "'>" + CP.divs[card_id-1] +  "</div>";
+		     return "<div class='card' id='" + element_id + "'>" + divs[card_id-1] +  "</div>";
 		 } else {
-		     return "<div class='card' id='" + element_id + "'>" + CP.divs[52] +  "</div>";
+		     return "<div class='card' id='" + element_id + "'>" + divs[52] +  "</div>";
 		 };
-	     },
+	     },             		 
 	     get_div: function() {
 		 return $('#' + element_id);
 		 },
+	     on_click: function(){
+		 card.inspect(card);
+		 card.move_to( {x: card.x+100,y:card.y+10} );
+	     },
 	     show: function(parent,z){
 		 this.get_div().remove();
-		 parent.prepend(this.make_div());
-		 console.log(position);
-		 this.get_div().css({position: "absolute"}).css({left:position.x + "px",top:position.y+"px",zIndex:z})
+		 this.parent = parent || this.parent;
+		 this.parent.prepend(this.make_div());
+		 this.get_div().css({position: "absolute"}).css({left:this.x + "px",top:this.y+"px",zIndex:z})
+		 this.get_div().click(this.on_click);
+		
 	     },
 	     flip: function(){
-		 this.card_id = 53;
+		 card_id = 53;
+		 this.show();
 		 },
-	     move_to: function(position) {
-		 this.position = {x: position.x-this.position.x,
-				  y: position.y-this.position.y};
-		 console.log("Move to " + this.position.x);
-		 console.log("Move to " + this.position.y);
-		 this.get_div().snabbt({position:[this.position.x,this.position.y,0]});
-		 console.log(this.get_div());
-	     }
-	 };
-	  return card;
-     },
-     create_stack: function(position,type,dif){
-	 var stack = {
-	     position: position,
-	     type: type,
-	     dif: dif,
-	     cards: [],
-	     add_card: function(card_id){
-		 cards.push(card_id);
-	     }
-	 };
-	 return stack;
-     }
- };
+	     move_to: function(pos) {
+		 this.get_div().snabbt({ position:[pos.x-this.x, pos.y-this.y ,300],
+					 duration: 500,
+					 delay: 10,
+                        		 rotation: [0, 2*Math.PI, 0],
+					 easing: 'ease'
+				         });
+		 this.get_div().css({position: "absolute"}).css({left:this.x + "px",top:this.y+"px",zIndex:105})
+	         this.x= pos.x;
+		 this.y = pos.y;
+	        }
+		
+	     };
+	     return card;
+	 }
+     };
+ }());
 
 
 $(document).ready(function(){
      var ele = $("#cardtable");
-     ele.css({"font-size": CP.font_size }); 
+     ele.css({"font-size": '3px' }); 
      ele.css({position: 'relative'});
-     var cards = [];
-     for (var i=1; i<54; i++){
-        cards[i] = CP.create_card(i,"c"+i,{x: 100+20*i,y: 100});
-        cards[i].show(ele,i)
-     };
-     cards[14].get_div().snabbt({ position:[110,200,0]});
-     cards[9].get_div().snabbt({ position:[110,200,100]});
-     cards[15].font_size="8px";
-     card[15].show();
-     cards[15].move_to({x: 400, y:300});
-     cards[1].move_to({x: 600, y:300});
-      
+     var card1 = CP.create_card(14,1,{x:0,y:0});
+     
+      card1.show(ele,1);
+      card1.move_to({x:10,y:10})
+
 });
