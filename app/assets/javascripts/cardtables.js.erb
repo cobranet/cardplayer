@@ -65,7 +65,17 @@ var CP = ( function(){
 		 dpx: pixdist,
 		 x: xpos,
 		 y: ypos,
-		 xnext: xpos
+		 xnext: xpos,
+		 add_card: function(card){
+		     this.cards[this.cards.length] = card;
+		     card.set_position(this.xnext,this.y);
+		     this.xnext = this.xpos+this.dpx;
+		     },
+		 show: function(){
+		     for (var i=0;i< this.cards.length; i++){
+			 alert(this.cards[i]);
+			 }
+		 }
 	     };
 	     return stack;
 	 },
@@ -94,6 +104,10 @@ var CP = ( function(){
 		 card.inspect(card);
 		 card.move_to( {x: card.x+100,y:card.y+10} );
 	     },
+             set_position: function(px,py) {
+		 this.x = px;
+		 this.y = py;
+	     },
 	     show: function(parent,z){
 		 this.get_div().remove();
 		 this.parent = parent || this.parent;
@@ -112,15 +126,15 @@ var CP = ( function(){
 		 card_id = 53;
 		 this.show();
 		 },
-	     move_to: function(pos) {
-		 this.get_div().snabbt({ position:[pos.x-this.x, pos.y-this.y ,300],
+	     move_to: function(px,py) {
+		 this.get_div().snabbt({ position:[px-this.x, py-this.y ,300],
 					 duration: 500,
 					 delay: 10,
 					 easing: 'spring'
 				         });
 		 this.get_div().css({position: "absolute"}).css({left:this.x + "px",top:this.y+"px",zIndex:105})
-	         this.x= pos.x;
-		 this.y = pos.y;
+	         this.x= px;
+		 this.y = py;
 	        }
 		
 	     };
@@ -140,21 +154,16 @@ $(document).ready(function(){
      var card3 = CP.create_card(33,3,{x:0,y:0});
     
      card1.show(ele,1);
-     card1.move_to({x:10,y:10})
-     setTimeout(function(){ card1.move_to({x:10,y:100});},2000);
-     setTimeout(function(){ card1.move_to({x:300,y:100});},4000);
-     setTimeout(function(){ card1.move_to({x:10,y:10});},6000);
-  
-     card2.show(ele,2);
-     card2.move_to({x:20,y:10})
-     setTimeout(function(){ card2.move_to({x:20,y:100});},2000);
-     setTimeout(function(){ card2.move_to({x:310,y:100});},4000);
-     setTimeout(function(){ card2.move_to({x:210,y:10});},6000);
-
-     card3.show(ele,1);
-    //     card3.move_to({x:10,y:10})
-     setTimeout(function(){ card3.move_to({x:120,y:100});},2000);
-     setTimeout(function(){ card3.move_to({x:400,y:100});},4000);
-     setTimeout(function(){ card3.move_to({x:30,y:10});},6000);
-
+     card1.move_to(10,10)
+     setTimeout(function(){ card1.move_to(10,100); },2000);
+     setTimeout(function(){ card1.move_to(300,100);},4000);
+     setTimeout(function(){ card1.move_to(10,10);},6000);
+     setTimeout(function(){ 
+	           card1.set_position(300,100); 
+	           card1.show(ele,1);
+			  },8000);
+    var stack = CP.create_stack("my",ele,'H',300,200,10);
+    
+    stack.add_card(card2);
+    stack.show();
 });
