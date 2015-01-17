@@ -69,11 +69,13 @@ var CP = ( function(){
 		 add_card: function(card){
 		     this.cards[this.cards.length] = card;
 		     card.set_position(this.xnext,this.y);
-		     this.xnext = this.xpos+this.dpx;
+		     this.xnext = this.x+this.dpx;
+		     console.log(this.xnext);
+		     console.log(JSON.stringify(this.cards));
 		     },
 		 show: function(){
 		     for (var i=0;i< this.cards.length; i++){
-			 alert(this.cards[i]);
+			 this.cards[i].show(this.parent,i);
 			 }
 		 }
 	     };
@@ -162,8 +164,10 @@ $(document).ready(function(){
 	           card1.set_position(300,100); 
 	           card1.show(ele,1);
 			  },8000);
-    var stack = CP.create_stack("my",ele,'H',300,200,10);
+    var stack = CP.create_stack("my",ele,'H',300,200,14);
     
     stack.add_card(card2);
+    var card4 = CP.create_card(4,11,{x:0,y:0});
+    stack.add_card(card4);
     stack.show();
 });
