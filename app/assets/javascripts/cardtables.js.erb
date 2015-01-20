@@ -77,15 +77,27 @@ var CP = ( function(){
 		     for (var i=0;i< this.cards.length; i++){
 			 this.cards[i].show(this.parent,i);
 			 }
+		 },
+		 move_to:function(xpos,ypos){
+		     this.x = xpos;
+		     this.y = ypos;
+		     for (var i=0;i< this.cards.length; i++){
+			 this.cards[i].move_to(xpos+this.dpx*i,ypos);
+			 }
+		     this.xnext = this.x + this.cards.length*this.dpox;
+		 },
+		 
+		 get_card: function(i) {
+		     return this.cards[i];
 		 }
 	     };
 	     return stack;
 	 },
-         create_card: function(card_id,element_id,position){
+         create_card: function(card_id,element_id){
 	     var card = {
 	         card_id: card_id,
-		 x: position.x,
-		 y: position.y,
+		 x: 0,
+		 y: 0,
 		 element_id: element_id,
 		 selected: true,
              inspect: function(){
@@ -148,12 +160,11 @@ var CP = ( function(){
 
 $(document).ready(function(){
      var ele = $("#cardtable");
-     ele.css({"font-size": '6px' }); 
+     ele.css({"font-size": '9px' }); 
      ele.css({position: 'relative'});
     
-     var card1 = CP.create_card(11,1,{x:0,y:0});
-     var card2 = CP.create_card(24,2,{x:0,y:0});
-     var card3 = CP.create_card(33,3,{x:0,y:0});
+     var card1 = CP.create_card(11,1);
+
     
      card1.show(ele,1);
      card1.move_to(10,10)
@@ -164,10 +175,16 @@ $(document).ready(function(){
 	           card1.set_position(300,100); 
 	           card1.show(ele,1);
 			  },8000);
-    var stack = CP.create_stack("my",ele,'H',300,200,14);
-    
+    var stack = CP.create_stack("my",ele,'H',500,200,24);
+
+    var card2 = CP.create_card(24,2);    
     stack.add_card(card2);
-    var card4 = CP.create_card(4,11,{x:0,y:0});
-    stack.add_card(card4);
+    var card3 = CP.create_card(4,11);
+    stack.add_card(card3);
+    var card5 = CP.create_card(8,12);
+    stack.add_card(card5);
     stack.show();
+    setTimeout(function(){
+	stack.move_to(0,0);
+	},4000);
 });
