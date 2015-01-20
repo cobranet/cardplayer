@@ -47,7 +47,7 @@ var CP = ( function(){
     "<%= Card.new(44).make_div %>",
     "<%= Card.new(45).make_div %>",
     "<%= Card.new(46).make_div %>",
-    "<%= Card.new(47).make_div %>",
+	 "<%= Card.new(47).make_div %>",
     "<%= Card.new(48).make_div %>",
     "<%= Card.new(49).make_div %>",
     "<%= Card.new(50).make_div %>",
@@ -66,12 +66,11 @@ var CP = ( function(){
 		 x: xpos,
 		 y: ypos,
 		 xnext: xpos,
+		 ynext: ypos,
 		 add_card: function(card){
 		     this.cards[this.cards.length] = card;
-		     card.set_position(this.xnext,this.y);
-		     this.xnext = this.x+this.dpx;
-		     console.log(this.xnext);
-		     console.log(JSON.stringify(this.cards));
+		     card.set_position(this.xnext,this.ynext);
+		     this.update_next_pos();
 		     },
 		 show: function(){
 		     for (var i=0;i< this.cards.length; i++){
@@ -82,9 +81,28 @@ var CP = ( function(){
 		     this.x = xpos;
 		     this.y = ypos;
 		     for (var i=0;i< this.cards.length; i++){
-			 this.cards[i].move_to(xpos+this.dpx*i,ypos);
+			 this.cards[i].move_to(xpos+this.dpx*i,ypos,i);
 			 }
-		     this.xnext = this.x + this.cards.length*this.dpox;
+		     this.update_next_pos();  
+		 },
+		
+		 update_next_pos: function(){
+		     if (this.tstack === 'H' ) {
+			 this.xnext = this.x + this.cards.length*this.dpx;
+			 this.ynext = this.y;
+		     }
+		     if (this.tstack === 'V') {
+			 this.ynext = this.y + this.cards.length*this.dpx;
+			 this.xnext = this.x;
+		     }
+		 },
+		 jump_to:function(xpos,ypos){
+		     this.x = xpos;
+		     this.y = ypos;
+		     for (var i=0;i< this.cards.length; i++){
+			 this.cards[i].jump_to(xpos+this.dpx*i,ypos,i);
+			 }
+		     this.update_next_pos();
 		 },
 		 
 		 get_card: function(i) {
@@ -103,6 +121,10 @@ var CP = ( function(){
              inspect: function(){
 		 console.log('inspect');
 		 console.log("x: " + this.x + "  " + "y: " + this.y);  
+	     },
+             jump_to: function(px,py,pz){
+		 this.set_position(px,py);
+		 this.show(this.parent,pz);
 	     },
 	     make_div: function() {
 		 if (this.card_id != 53 ) {
@@ -140,13 +162,13 @@ var CP = ( function(){
 		 card_id = 53;
 		 this.show();
 		 },
-	     move_to: function(px,py) {
+	     move_to: function(px,py,pz) {
 		 this.get_div().snabbt({ position:[px-this.x, py-this.y ,300],
 					 duration: 500,
 					 delay: 10,
 					 easing: 'spring'
 				         });
-		 this.get_div().css({position: "absolute"}).css({left:this.x + "px",top:this.y+"px",zIndex:105})
+		 this.get_div().css({position: "absolute"}).css({left:this.x + "px",top:this.y+"px",zIndex:pz})
 	         this.x= px;
 		 this.y = py;
 	        }
@@ -172,19 +194,32 @@ $(document).ready(function(){
      setTimeout(function(){ card1.move_to(300,100);},4000);
      setTimeout(function(){ card1.move_to(10,10);},6000);
      setTimeout(function(){ 
-	           card1.set_position(300,100); 
-	           card1.show(ele,1);
+	           card1.jump_to(300,100,12); 
 			  },8000);
     var stack = CP.create_stack("my",ele,'H',500,200,24);
+    console.log("STack" + stack.xnext);
+
 
     var card2 = CP.create_card(24,2);    
     stack.add_card(card2);
+    console.log("STack" + stack.xnext);
     var card3 = CP.create_card(4,11);
     stack.add_card(card3);
+    console.log("STack" + stack.xnext);
     var card5 = CP.create_card(8,12);
     stack.add_card(card5);
     stack.show();
+    console.log("STack" + stack.xnext);
     setTimeout(function(){
 	stack.move_to(0,0);
+	    console.log("STack move_to" + stack.xnext);
 	},4000);
+    setTimeout(function(){
+	stack.jump_to(100,100);
+	console.log("STack jump to" + stack.xnext);
+	},8000);
+    setTimeout(function(){
+	stack.add_card(CP.create_card(1,17));
+	stack.show(ele,1);
+    },9000);
 });
