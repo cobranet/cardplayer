@@ -47,7 +47,7 @@ var CP = ( function(){
     "<%= Card.new(44).make_div %>",
     "<%= Card.new(45).make_div %>",
     "<%= Card.new(46).make_div %>",
-	 "<%= Card.new(47).make_div %>",
+    "<%= Card.new(47).make_div %>",
     "<%= Card.new(48).make_div %>",
     "<%= Card.new(49).make_div %>",
     "<%= Card.new(50).make_div %>",
@@ -81,7 +81,13 @@ var CP = ( function(){
 		     this.x = xpos;
 		     this.y = ypos;
 		     for (var i=0;i< this.cards.length; i++){
-			 this.cards[i].move_to(xpos+this.dpx*i,ypos,i);
+			 if ( this.tstack === 'H' ) {
+			     this.cards[i].move_to(xpos+this.dpx*i,ypos,i);
+			 }
+			 if ( this.tstack === 'V' ) {
+			     this.cards[i].move_to(xpos,this.dpx*i+ypos,i);
+			 }
+			 
 			 }
 		     this.update_next_pos();  
 		 },
@@ -100,7 +106,13 @@ var CP = ( function(){
 		     this.x = xpos;
 		     this.y = ypos;
 		     for (var i=0;i< this.cards.length; i++){
-			 this.cards[i].jump_to(xpos+this.dpx*i,ypos,i);
+			 if (this.tstack === 'H'){
+			     this.cards[i].jump_to(xpos+this.dpx*i,ypos,i);
+			 }
+			 if (this.tstack === 'V'){
+			     this.cards[i].jump_to(xpos,this.dpx*i+ypos,i);
+			 }
+			 
 			 }
 		     this.update_next_pos();
 		 },
@@ -196,7 +208,7 @@ $(document).ready(function(){
      setTimeout(function(){ 
 	           card1.jump_to(300,100,12); 
 			  },8000);
-    var stack = CP.create_stack("my",ele,'H',500,200,24);
+    var stack = CP.create_stack("my",ele,'V',500,200,24);
     console.log("STack" + stack.xnext);
 
 
