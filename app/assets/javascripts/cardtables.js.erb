@@ -1,5 +1,5 @@
 var CP = ( function(){
-     var font_size = "4px";
+     var table = {};
      var divs = [
     "<%= Card.new(1).make_div %>",
     "<%= Card.new(2).make_div %>",
@@ -56,11 +56,35 @@ var CP = ( function(){
     "<%= Card.make_back %>"	 
      ];
      return { 
-	 create_stack: function(stack_id,parent_div,stack_type,xpos,ypos,pixdist){
+	 create_table: function(ele,pxsize){
+	     table = {
+		 parent: ele,
+		 pxsize: pxsize
+	     };
+	     ele.css({"font-size": pxsize+'px' }); 
+	     ele.css({position: 'relative'});
+	     return table;
+	 },
+	 get_pxsize: function(){
+	     return table.pxsize;
+	 },
+	 get_table: function(){
+	     return table.parent;
+	 },
+	 // optimal size is 5px 
+	 // every other position will scale
+	 scale: function(x) {
+	     return x* (this.get_pxsize() / 5)
+	 },
+	 create_stack: function(stack_id,stack_type,xpos,ypos,pixdist){
+	     xpos = CP.scale(xpos);
+	     ypos = CP.scale(ypos);
+	     alert(xpos);
+	     pixdist = this.scale(pixdist);
 	     var stack = {
 		 id: stack_id,
 		 cards: [],
-		 parent: parent_div,
+		 parent: CP.get_table(),
 		 tstack: stack_type,
 		 dpx: pixdist,
 		 x: xpos,
@@ -74,10 +98,12 @@ var CP = ( function(){
 		     },
 		 show: function(){
 		     for (var i=0;i< this.cards.length; i++){
-			 this.cards[i].show(this.parent,i);
+			 this.cards[i].show(i);
 			 }
 		 },
 		 move_to:function(xpos,ypos){
+		     xpos = CP.scale(xpos);
+		     ypos = CP.scale(ypos);
 		     this.x = xpos;
 		     this.y = ypos;
 		     for (var i=0;i< this.cards.length; i++){
@@ -107,6 +133,8 @@ var CP = ( function(){
 		     }
 		 },
 		 jump_to:function(xpos,ypos){
+		     xpos = CP.scale(xpos);
+		     ypos = CP.scale(ypos);
 		     this.x = xpos;
 		     this.y = ypos;
 		     for (var i=0;i< this.cards.length; i++){
@@ -152,17 +180,18 @@ var CP = ( function(){
 	     get_div: function() {
 		 return $('#' + element_id);
 		 },
-	     on_click: function(){
-		 card.inspect(card);
-		 card.move_to( {x: card.x+100,y:card.y+10} );
+	     on_click: function(ele){
+		 alert(JSON.stringify());
 	     },
              set_position: function(px,py) {
+		 px = CP.scale(px);
+		 py = CP.scale(py);
 		 this.x = px;
 		 this.y = py;
 	     },
-	     show: function(parent,z){
+	     show: function(z){
 		 this.get_div().remove();
-		 this.parent = parent || this.parent;
+		 this.parent = CP.get_table() || this.parent;
 		 this.parent.prepend(this.make_div());
 		 this.get_div().css({position: "absolute"}).css({left:this.x + "px",top:this.y+"px",zIndex:z});
 		 if (this.selected){
@@ -179,6 +208,8 @@ var CP = ( function(){
 		 this.show();
 		 },
 	     move_to: function(px,py,pz) {
+		 px = CP.scale(px);
+		 py = CP.scale(py);
 		 this.get_div().snabbt({ position:[px-this.x, py-this.y ,300],
 					 duration: 500,
 					 delay: 10,
@@ -198,13 +229,11 @@ var CP = ( function(){
 
 $(document).ready(function(){
      var ele = $("#cardtable");
-     ele.css({"font-size": '5px' }); 
-     ele.css({position: 'relative'});
-    
+     var table = CP.create_table(ele,6); 
      var card1 = CP.create_card(11,1);
 
     
-     card1.show(ele,1);
+     card1.show(1);
      card1.move_to(10,10)
      setTimeout(function(){ card1.move_to(10,100); },2000);
      setTimeout(function(){ card1.move_to(300,100);},4000);
@@ -212,8 +241,8 @@ $(document).ready(function(){
      setTimeout(function(){ 
 	           card1.jump_to(300,100,12); 
 			  },8000);
-    var stack = CP.create_stack("my",ele,'V',500,200,24);
-    console.log("STack" + stack.xnext);
+    var stack = CP.create_stack("my",'V',500,200,12);
+    console.log("Stack" + stack.xnext);
 
 
     var card2 = CP.create_card(24,2);    
@@ -228,9 +257,10 @@ $(document).ready(function(){
 	},4000);
     setTimeout(function(){
 	stack.jump_to(100,100);
+	console.log("after jump" + stack.xnext + ' ' + stack.ynext );
 	},8000);
     setTimeout(function(){
 	stack.add_card(CP.create_card(1,17));
-	stack.show(ele,1);
+	stack.show();
     },9000);
 });
