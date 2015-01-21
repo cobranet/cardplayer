@@ -101,6 +101,10 @@ var CP = ( function(){
 			 this.ynext = this.y + this.cards.length*this.dpx;
 			 this.xnext = this.x;
 		     }
+		     if (this.tstack === 'P') {
+			 this.ynext = this.y;
+			 this.xnext = this.y;
+		     }
 		 },
 		 jump_to:function(xpos,ypos){
 		     this.x = xpos;
@@ -194,7 +198,7 @@ var CP = ( function(){
 
 $(document).ready(function(){
      var ele = $("#cardtable");
-     ele.css({"font-size": '9px' }); 
+     ele.css({"font-size": '5px' }); 
      ele.css({position: 'relative'});
     
      var card1 = CP.create_card(11,1);
@@ -214,21 +218,16 @@ $(document).ready(function(){
 
     var card2 = CP.create_card(24,2);    
     stack.add_card(card2);
-    console.log("STack" + stack.xnext);
     var card3 = CP.create_card(4,11);
     stack.add_card(card3);
-    console.log("STack" + stack.xnext);
     var card5 = CP.create_card(8,12);
     stack.add_card(card5);
     stack.show();
-    console.log("STack" + stack.xnext);
     setTimeout(function(){
 	stack.move_to(0,0);
-	    console.log("STack move_to" + stack.xnext);
 	},4000);
     setTimeout(function(){
 	stack.jump_to(100,100);
-	console.log("STack jump to" + stack.xnext);
 	},8000);
     setTimeout(function(){
 	stack.add_card(CP.create_card(1,17));
