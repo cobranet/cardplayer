@@ -71,8 +71,11 @@ var CP = ( function(){
 	 },
 	 add_card_to_stack: function(stack_id,card_id,element_id){
 	     c = CP.create_card(card_id,element_id);
-	     console.log(CP.stacks["left"]);
+	     console.log("LEFT" + CP.stacks["left"]);
 	     CP.stacks[stack_id].add_card(c);
+	 },
+	 show_stack: function(stack_id) {
+	     this.stacks[stack_id].show();
 	 },
 	 get_table: function(){
 	     return table.parent;
@@ -84,13 +87,24 @@ var CP = ( function(){
 	 },
 	 get_data: function(){
 	     return { moves: 
-		      [{ num: 1,
+		      [{ 
 			 action: "create_stack",
-		 	 params: ["left","V",30,30,10] },
-		       { num: 2,
+		 	 params: ["left","H",30,30,10] },
+		       { 
 			 action: "add_card_to_stack",
 		 	 params: ["left", 6, "card6"] },
-
+		       { 
+			 action: "add_card_to_stack",
+		 	 params: ["left", 15, "card15"] },
+		       { 
+			 action: "add_card_to_stack",
+		 	 params: ["left", 21, "card21"] },
+		       { 
+			 action: "add_card_to_stack",
+		 	 params: ["left", 25, "card25"] },
+		       { 
+			 action: "show_stack",
+		 	 params: ["left"] }
 		      ]};
 		 
 	     },
@@ -184,7 +198,7 @@ var CP = ( function(){
 		     return this.cards[i];
 		 }
 	     };
-	     CP.stacks["left"] = stack;
+	     CP.stacks[stack_id] = stack;
 	     return stack;
 	 },
          create_card: function(card_id,element_id){
@@ -308,6 +322,11 @@ $(document).ready(function(){
     },9000);
 
     a = CP.get_data();
-    CP[a.moves[0].action](a.moves[0].params);
-    CP[a.moves[1].action](a.moves[1].params);
+    console.log(a.moves);
+    for ( var i = 0; i< a.moves.length; i++) {
+	move = a.moves[i];
+	CP[move.action].apply(CP,move.params);
+	
+    };
+
 });
