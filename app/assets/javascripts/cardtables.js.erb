@@ -61,6 +61,11 @@ var CP = ( function(){
 	     setTimeout(function(){ 
 		 CP[move.action].apply(CP,move.params);},time);	     
 	 },
+	 move_card: function(stack_id,i,px,py){
+	     console.log(stack_id + " " + i ); 
+	     CP.stacks[stack_id].cards[i].move_to(px,py);
+	     CP.stacks[stack_id].remove_card(i,true);
+	 },
 	 create_table: function(ele,pxsize){
 	     table = {
 		 parent: ele,
@@ -75,14 +80,12 @@ var CP = ( function(){
 	 },
 	 add_card_to_stack: function(stack_id,card_id,element_id,show){
 	     c = CP.create_card(card_id,element_id);
-	     console.log("LEFT" + CP.stacks["left"]);
 	     CP.stacks[stack_id].add_card(c);
 	     if (show === true ) {
 		 CP.show_stack(stack_id);
 	     }
 	 },
 	 show_stack: function(stack_id) {
-	     console.log(CP.stacks);
 	     CP.stacks[stack_id].show();
 	 },
 	 get_table: function(){
@@ -109,11 +112,21 @@ var CP = ( function(){
 			 action: "add_card_to_stack",
 		 	 params: ["left", 21, "card21"] },
 		       { 
-			 action: "add_card_to_stack",
-		 	 params: ["left", 25, "card25",true] }
+			 action: "move_card",
+		 	 params: ["left", 1, 300,300] },
+		       { 
+			 action: "add_cards_to_stack",
+		 	 params: ["left", [8,11,12,24,40,50]] }
+
 		      ]};
 		 
 	     },
+	 add_cards_to_stack: function(stack_id,cards_ids){
+	     console.log(cards_ids[0]);
+	     for(i=0;i<cards_ids.length; i++){
+		 CP.add_card_to_stack(stack_id,cards_ids[i],'card' + cards_ids[i],true);
+	     }
+	 },
 	 create_stack: function(stack_id,stack_type,xpos,ypos,pixdist){
 	     xpos = CP.scale(xpos);
 	     ypos = CP.scale(ypos);
@@ -147,10 +160,27 @@ var CP = ( function(){
 			     if ( i > atpos) {
 				 new_cards[i+1] = this.cards[i];
 			 }
-			     
+	              }
+		 },
+		 update_card_position: function(i){
+		     
+		     if(this.tstack === 'V') {
+			 this.cards[i].set_position(this.x,this.dpx*i+this.y);
+		      };
+		     if (this.tstack === 'H') {
+			 this.cards[i].set_position(this.x + this.dpx*i,this.y);
 		     }
-		     
-		     
+		 },
+		 remove_card: function(atpos,showstack) {
+		     this.cards.splice(atpos,1);
+		     for(var i=atpos; i< this.cards.length; i++){
+			 this.update_card_position(i);
+		     };
+		     this.update_next_pos();
+		     if (showstack === true) {
+			 console.log(showstack);
+			 this.show();
+		     }
 		 },
 		 move_to:function(xpos,ypos){
 		     xpos = CP.scale(xpos);
@@ -205,7 +235,6 @@ var CP = ( function(){
 		 }
 	     };
 	     CP.stacks[stack_id] = stack;
-	     console.log("Stack created " + stack_id + "  "  + CP.stacks[stack_id]);
 	     return stack;
 	 },
          create_card: function(card_id,element_id){
@@ -332,7 +361,7 @@ $(document).ready(function(){
     for ( var i = 0; i<a.moves.length ; i++) {
 	move = a.moves[i];
 	//CP[move.action].apply(CP,move.params);
-	CP.postopone(move,i*600);
+	CP.postopone(move,i*1000);
     };
 
 });
