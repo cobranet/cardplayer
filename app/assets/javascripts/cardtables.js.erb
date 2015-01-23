@@ -57,6 +57,10 @@ var CP = ( function(){
      ];
      return {
 	 stacks: {},
+	 postopone: function(move,time){
+	     setTimeout(function(){ 
+		 CP[move.action].apply(CP,move.params);},time);	     
+	 },
 	 create_table: function(ele,pxsize){
 	     table = {
 		 parent: ele,
@@ -69,13 +73,17 @@ var CP = ( function(){
 	 get_pxsize: function(){
 	     return table.pxsize;
 	 },
-	 add_card_to_stack: function(stack_id,card_id,element_id){
+	 add_card_to_stack: function(stack_id,card_id,element_id,show){
 	     c = CP.create_card(card_id,element_id);
 	     console.log("LEFT" + CP.stacks["left"]);
 	     CP.stacks[stack_id].add_card(c);
+	     if (show === true ) {
+		 CP.show_stack(stack_id);
+	     }
 	 },
 	 show_stack: function(stack_id) {
-	     this.stacks[stack_id].show();
+	     console.log(CP.stacks);
+	     CP.stacks[stack_id].show();
 	 },
 	 get_table: function(){
 	     return table.parent;
@@ -92,19 +100,17 @@ var CP = ( function(){
 		 	 params: ["left","H",30,30,10] },
 		       { 
 			 action: "add_card_to_stack",
-		 	 params: ["left", 6, "card6"] },
+		 	 params: ["left", 6, "card6",true] },
+
 		       { 
 			 action: "add_card_to_stack",
-		 	 params: ["left", 15, "card15"] },
+		 	 params: ["left", 15, "card15",true] },
 		       { 
 			 action: "add_card_to_stack",
 		 	 params: ["left", 21, "card21"] },
 		       { 
 			 action: "add_card_to_stack",
-		 	 params: ["left", 25, "card25"] },
-		       { 
-			 action: "show_stack",
-		 	 params: ["left"] }
+		 	 params: ["left", 25, "card25",true] }
 		      ]};
 		 
 	     },
@@ -199,6 +205,7 @@ var CP = ( function(){
 		 }
 	     };
 	     CP.stacks[stack_id] = stack;
+	     console.log("Stack created " + stack_id + "  "  + CP.stacks[stack_id]);
 	     return stack;
 	 },
          create_card: function(card_id,element_id){
@@ -279,54 +286,53 @@ $(document).ready(function(){
      var card1 = CP.create_card(11,1);
 
     
-     card1.show(1);
-     card1.move_to(10,10)
-     setTimeout(function(){ card1.move_to(10,100); },2000);
-     setTimeout(function(){ card1.move_to(300,100);},4000);
-     setTimeout(function(){ card1.move_to(10,10);},6000);
-     setTimeout(function(){ 
-	           card1.jump_to(300,100,12); 
-			  },8000);
-    var stack = CP.create_stack("my",'V',500,200,20);
-    var stack2 = CP.create_stack("my1",'H',100,100,12);
+    //  card1.show(1);
+    //  card1.move_to(10,10)
+    //  setTimeout(function(){ card1.move_to(10,100); },2000);
+    //  setTimeout(function(){ card1.move_to(300,100);},4000);
+    //  setTimeout(function(){ card1.move_to(10,10);},6000);
+    //  setTimeout(function(){ 
+    // 	           card1.jump_to(300,100,12); 
+    // 			  },8000);
+    // var stack = CP.create_stack("my",'V',500,200,20);
+    // var stack2 = CP.create_stack("my1",'H',100,100,12);
     
-    var card2 = CP.create_card(24,2);    
-    stack.add_card(card2);
+    // var card2 = CP.create_card(24,2);    
+    // stack.add_card(card2);
 
-    var cardAD = CP.create_card(14,"AD");   
-    var card2D = CP.create_card(15,"2D");   
-    var card7D = CP.create_card(20,"7D");   
-    var card8D = CP.create_card(21,"8D");   
+    // var cardAD = CP.create_card(14,"AD");   
+    // var card2D = CP.create_card(15,"2D");   
+    // var card7D = CP.create_card(20,"7D");   
+    // var card8D = CP.create_card(21,"8D");   
     
-    stack2.add_card(cardAD);
-    stack2.add_card(card2D);
-    stack2.add_card(card7D);
-    stack2.add_card(card8D);
-    stack2.show();
-    setTimeout(function(){stack2.move_to(300,0);},6000);
-    var card3 = CP.create_card(4,11);
-    stack.add_card(card3);
-    var card5 = CP.create_card(8,12);
-    stack.add_card(card5);
-    stack.show();
-    setTimeout(function(){
-	stack.move_to(0,0);
-	},4000);
-    setTimeout(function(){
-	stack.jump_to(100,100);
-	console.log("after jump" + stack.xnext + ' ' + stack.ynext );
-	},8000);
-    setTimeout(function(){
-	stack.add_card(CP.create_card(1,17));
-	stack.show();
-    },9000);
+    // stack2.add_card(cardAD);
+    // stack2.add_card(card2D);
+    // stack2.add_card(card7D);
+    // stack2.add_card(card8D);
+    // stack2.show();
+    // setTimeout(function(){stack2.move_to(300,0);},6000);
+    // var card3 = CP.create_card(4,11);
+    // stack.add_card(card3);
+    // var card5 = CP.create_card(8,12);
+    // stack.add_card(card5);
+    // stack.show();
+    // setTimeout(function(){
+    // 	stack.move_to(0,0);
+    // 	},4000);
+    // setTimeout(function(){
+    // 	stack.jump_to(100,100);
+    // 	console.log("after jump" + stack.xnext + ' ' + stack.ynext );
+    // 	},8000);
+    // setTimeout(function(){
+    // 	stack.add_card(CP.create_card(1,17));
+    // 	stack.show();
+    // },9000);
 
     a = CP.get_data();
-    console.log(a.moves);
-    for ( var i = 0; i< a.moves.length; i++) {
+    for ( var i = 0; i<a.moves.length ; i++) {
 	move = a.moves[i];
-	CP[move.action].apply(CP,move.params);
-	
+	//CP[move.action].apply(CP,move.params);
+	CP.postopone(move,i*600);
     };
 
 });
