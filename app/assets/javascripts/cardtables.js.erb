@@ -96,6 +96,60 @@ var CP = ( function(){
 	 scale: function(x) {
 	     return x* (this.get_pxsize() / 5)
 	 },
+	 get_passians_data: function(){
+	     return { moves:
+		      [{
+			  action: "create_stack",
+			  params: ["draw","0",30,30,10] },
+		       {
+			  action: "add_card_to_stack",
+			  params: ["draw",53,"closed1",true] },
+		       {
+			  action: "create_stack",
+			  params: ["col1","V",200,30,10] },
+		       {  
+			  action: "add_card_to_stack",
+			  params: ["col1",12,"card12",true] },
+		       {
+			  action: "create_stack",
+			  params: ["col2","V",270,30,10] },
+		       {  
+			  action: "add_card_to_stack",
+			  params: ["col2",53,"card531",true] },
+		       {  
+			  action: "add_card_to_stack",
+			  params: ["col2",44,"card44",true] },
+		       {
+			  action: "create_stack",
+			  params: ["col3","V",340,30,10] },
+		       {  
+			  action: "add_card_to_stack",
+			  params: ["col3",53,"card551",true] },
+		       {  
+			  action: "add_card_to_stack",
+			  params: ["col3",53,"card445",true] },
+		       {  
+			  action: "add_card_to_stack",
+			  params: ["col3",1,"card1stack",true] },
+       		       {
+			  action: "create_stack",
+			  params: ["col4","V",410,30,10] },
+		       {  
+			  action: "add_card_to_stack",
+			  params: ["col4",53,"card3551",true] },
+		       {  
+			  action: "add_card_to_stack",
+			  params: ["col4",53,"card4345",true] },
+		       {  
+			  action: "add_card_to_stack",
+			  params: ["col4",53,"card11stack",true] },
+		       {  
+			  action: "add_card_to_stack",
+			   params: ["col4",16,"card31stack",true] }
+       	
+
+		      ]};
+	 },
 	 get_data: function(){
 	     return { moves: 
 		      [{ 
@@ -116,7 +170,37 @@ var CP = ( function(){
 		 	 params: ["left", 1, 300,300] },
 		       { 
 			 action: "add_cards_to_stack",
-		 	 params: ["left", [8,11,12,24,40,50]] }
+		 	 params: ["left", [8,11,12,24,40,50]] },
+		       { 
+			 action: "move_card",
+		 	 params: ["left", 5, 200,200]},
+		       { 
+			 action: "create_stack",
+		 	 params: ["right","H",530,30,10] },
+		       { 
+			 action: "add_cards_to_stack",
+		 	 params: ["right",[9,18,13,41,42,47]]},
+		       { 
+			 action: "move_card",
+		 	 params: ["right",3,220,200]},
+		       { 
+			 action: "move_stack",
+		 	 params: ["right",530,140]},
+		       { 
+			 action: "create_stack",
+		 	 params: ["south","H",630,30,10] },
+		       { 
+			 action: "add_cards_to_stack",
+		 	 params: ["south",[31,32,33,34,35,36]]},
+		       { 
+			 action: "move_card",
+		 	 params: ["south",3,220,220]},
+		       { 
+			 action: "move_stack",
+		 	 params: ["south",530,240]},
+ 		       {  
+			  action: "add_card_to_stack",
+			  params: ["col2",53,"card445",true] }
 
 		      ]};
 		 
@@ -126,6 +210,9 @@ var CP = ( function(){
 	     for(i=0;i<cards_ids.length; i++){
 		 CP.add_card_to_stack(stack_id,cards_ids[i],'card' + cards_ids[i],true);
 	     }
+	 },
+	 move_stack: function(stack_id,px,py){
+	     CP.stacks[stack_id].move_to(px,py);
 	 },
 	 create_stack: function(stack_id,stack_type,xpos,ypos,pixdist){
 	     xpos = CP.scale(xpos);
@@ -145,7 +232,7 @@ var CP = ( function(){
 		     this.cards[this.cards.length] = card;
 		     card.set_position(this.xnext,this.ynext);
 		     this.update_next_pos();
-		     },
+		 },
 		 show: function(){
 		     for (var i=0;i< this.cards.length; i++){
 			 this.cards[i].show(i);
@@ -170,6 +257,10 @@ var CP = ( function(){
 		     if (this.tstack === 'H') {
 			 this.cards[i].set_position(this.x + this.dpx*i,this.y);
 		     }
+		     if (this.tstack === '0') {
+			 this.cards[i].set_position(this.x,this.y);
+		     }
+			 
 		 },
 		 remove_card: function(atpos,showstack) {
 		     this.cards.splice(atpos,1);
@@ -194,8 +285,10 @@ var CP = ( function(){
 			 if ( this.tstack === 'V' ) {
 			     this.cards[i].move_to(xpos,this.dpx*i+ypos,i);
 			 }
-			 
+			 if (this.tstack === '0'){
+			     this.cards[i].move_to(xpos,ypos,i);
 			 }
+		     }
 		     this.update_next_pos();  
 		 },
 		
@@ -208,7 +301,7 @@ var CP = ( function(){
 			 this.ynext = this.y + this.cards.length*this.dpx;
 			 this.xnext = this.x;
 		     }
-		     if (this.tstack === 'P') {
+		     if (this.tstack === '0') {
 			 this.ynext = this.y;
 			 this.xnext = this.y;
 		     }
@@ -225,6 +318,10 @@ var CP = ( function(){
 			 if (this.tstack === 'V'){
 			     this.cards[i].jump_to(xpos,this.dpx*i+ypos,i);
 			 }
+			 if (this.tstack === '0'){
+			     this.cards[i].jump_to(xpos,ypos,i);
+			 }
+			 
 			 
 			 }
 		     this.update_next_pos();
@@ -312,56 +409,16 @@ var CP = ( function(){
 $(document).ready(function(){
      var ele = $("#cardtable");
      var table = CP.create_table(ele,6); 
-     var card1 = CP.create_card(11,1);
-
-    
-    //  card1.show(1);
-    //  card1.move_to(10,10)
-    //  setTimeout(function(){ card1.move_to(10,100); },2000);
-    //  setTimeout(function(){ card1.move_to(300,100);},4000);
-    //  setTimeout(function(){ card1.move_to(10,10);},6000);
-    //  setTimeout(function(){ 
-    // 	           card1.jump_to(300,100,12); 
-    // 			  },8000);
-    // var stack = CP.create_stack("my",'V',500,200,20);
-    // var stack2 = CP.create_stack("my1",'H',100,100,12);
-    
-    // var card2 = CP.create_card(24,2);    
-    // stack.add_card(card2);
-
-    // var cardAD = CP.create_card(14,"AD");   
-    // var card2D = CP.create_card(15,"2D");   
-    // var card7D = CP.create_card(20,"7D");   
-    // var card8D = CP.create_card(21,"8D");   
-    
-    // stack2.add_card(cardAD);
-    // stack2.add_card(card2D);
-    // stack2.add_card(card7D);
-    // stack2.add_card(card8D);
-    // stack2.show();
-    // setTimeout(function(){stack2.move_to(300,0);},6000);
-    // var card3 = CP.create_card(4,11);
-    // stack.add_card(card3);
-    // var card5 = CP.create_card(8,12);
-    // stack.add_card(card5);
-    // stack.show();
-    // setTimeout(function(){
-    // 	stack.move_to(0,0);
-    // 	},4000);
-    // setTimeout(function(){
-    // 	stack.jump_to(100,100);
-    // 	console.log("after jump" + stack.xnext + ' ' + stack.ynext );
-    // 	},8000);
-    // setTimeout(function(){
-    // 	stack.add_card(CP.create_card(1,17));
-    // 	stack.show();
-    // },9000);
-
-    a = CP.get_data();
-    for ( var i = 0; i<a.moves.length ; i++) {
-	move = a.moves[i];
-	//CP[move.action].apply(CP,move.params);
-	CP.postopone(move,i*1000);
+    //  a = CP.get_data();
+    //  for ( var i = 0; i<a.moves.length ; i++) {
+    // 	move = a.moves[i];
+    // 	CP.postopone(move,i*300);
+    // };
+     b = CP.get_passians_data();
+     for ( var i = 0; i<b.moves.length ; i++) {
+	move = b.moves[i];
+	CP.postopone(move,i*300);
     };
+
 
 });
