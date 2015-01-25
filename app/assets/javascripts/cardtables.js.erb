@@ -11,7 +11,7 @@ var CP = ( function(){
     "<%= Card.new(8).make_div %>",
     "<%= Card.new(9).make_div %>",
     "<%= Card.new(10).make_div %>",
-    "<%= Card.new(11).make_div %>",
+    "<%= Card.new(11).make_div %>", 
     "<%= Card.new(12).make_div %>",
     "<%= Card.new(13).make_div %>",
     "<%= Card.new(14).make_div %>",
@@ -57,14 +57,21 @@ var CP = ( function(){
      ];
      return {
 	 stacks: {},
+	 all_cards: [],
 	 postopone: function(move,time){
 	     setTimeout(function(){ 
 		 CP[move.action].apply(CP,move.params);},time);	     
 	 },
-	 move_card: function(stack_id,i,px,py){
-	     console.log(stack_id + " " + i ); 
-	     CP.stacks[stack_id].cards[i].move_to(px,py);
+	 from_stack_move: function(stack_from,i,stack_to){
+	     card = CP.stacks[stack_from].cards[i];
+	     CP.move_card(stack_from,i,CP.stacks[stack_to].xnext,CP.stacks[stack_to].ynext,CP.stacks[stack_to].znext);
+	     newstack = CP.stacks[stack_to];
+	     newstack.cards[newstack.cards.length] = card;
+	 },
+	 move_card: function(stack_id,i,px,py,pz){
+	     CP.stacks[stack_id].cards[i].move_to(px,py,pz);
 	     CP.stacks[stack_id].remove_card(i,true);
+	     
 	 },
 	 create_table: function(ele,pxsize){
 	     table = {
@@ -78,8 +85,8 @@ var CP = ( function(){
 	 get_pxsize: function(){
 	     return table.pxsize;
 	 },
-	 add_card_to_stack: function(stack_id,card_id,element_id,show){
-	     c = CP.create_card(card_id,element_id);
+	 add_card_to_stack: function(stack_id,card_id,show){
+	     c = CP.create_card(card_id);
 	     CP.stacks[stack_id].add_card(c);
 	     if (show === true ) {
 		 CP.show_stack(stack_id);
@@ -100,120 +107,97 @@ var CP = ( function(){
 	     return { moves:
 		      [{
 			  action: "create_stack",
-			  params: ["draw","0",30,30,10] },
+			  params: ["draw","0",30,30,20] },
 		       {
 			  action: "add_card_to_stack",
-			  params: ["draw",53,"closed1",true] },
-		       {
-			  action: "create_stack",
-			  params: ["col1","V",200,30,10] },
-		       {  
-			  action: "add_card_to_stack",
-			  params: ["col1",12,"card12",true] },
+			  params: ["draw",53,true] },
 		       {
 			  action: "create_stack",
-			  params: ["col2","V",270,30,10] },
+			  params: ["col1","V",200,30,20] },
 		       {  
 			  action: "add_card_to_stack",
-			  params: ["col2",53,"card531",true] },
-		       {  
-			  action: "add_card_to_stack",
-			  params: ["col2",44,"card44",true] },
+			  params: ["col1",12,true] },
 		       {
 			  action: "create_stack",
-			  params: ["col3","V",340,30,10] },
+			  params: ["col2","V",270,30,20] },
 		       {  
 			  action: "add_card_to_stack",
-			  params: ["col3",53,"card551",true] },
+			  params: ["col2",53,true] },
 		       {  
 			  action: "add_card_to_stack",
-			  params: ["col3",53,"card445",true] },
+			  params: ["col2",44,true] },
+		       {
+			  action: "create_stack",
+			  params: ["col3","V",340,30,15] },
 		       {  
 			  action: "add_card_to_stack",
-			  params: ["col3",1,"card1stack",true] },
+			  params: ["col3",53,true] },
+		       {  
+			  action: "add_card_to_stack",
+			  params: ["col3",53,true] },
+		       {  
+			  action: "add_card_to_stack",
+			  params: ["col3",1,true] },
        		       {
 			  action: "create_stack",
-			  params: ["col4","V",410,30,10] },
+			  params: ["col4","V",410,30,20] },
 		       {  
 			  action: "add_card_to_stack",
-			  params: ["col4",53,"card3551",true] },
+			  params: ["col4",53,true] },
 		       {  
 			  action: "add_card_to_stack",
-			  params: ["col4",53,"card4345",true] },
+			  params: ["col4",53,true] },
 		       {  
 			  action: "add_card_to_stack",
-			  params: ["col4",53,"card11stack",true] },
+			  params: ["col4",53,true] },
 		       {  
 			  action: "add_card_to_stack",
-			   params: ["col4",16,"card31stack",true] }
-       	
+			   params: ["col4",16,true] },
+		       {
+			  action: "create_stack",
+			  params: ["col5","V",480,30,20] },
+		       {
+			  action: "add_cards_to_stack",
+			  params: ["col5",[53,53,53,53,2],true] },
+		       {
+			  action: "create_stack",
+			  params: ["col6","V",550,30,20] },
+		       {
+			  action: "add_cards_to_stack",
+			  params: ["col6",[53,53,53,53,53,32],true] },
+		       {
+			  action: "create_stack",
+			  params: ["col7","V",620,30,20] },
+		       {
+			  action: "add_cards_to_stack",
+			  params: ["col7",[53,53,53,53,53,53,41],true] },
+       		       {
+			   action: "from_stack_move",
+			   params: ["col4",3,"col7"]},
+
+		       {   action: "move_stack",
+			   params: ["col7",620,130]},
+		       {   action: "move_stack",
+			   params: ["col7",620,30]}
+
 
 		      ]};
 	 },
-	 get_data: function(){
-	     return { moves: 
-		      [{ 
-			 action: "create_stack",
-		 	 params: ["left","H",30,30,10] },
-		       { 
-			 action: "add_card_to_stack",
-		 	 params: ["left", 6, "card6",true] },
-
-		       { 
-			 action: "add_card_to_stack",
-		 	 params: ["left", 15, "card15",true] },
-		       { 
-			 action: "add_card_to_stack",
-		 	 params: ["left", 21, "card21"] },
-		       { 
-			 action: "move_card",
-		 	 params: ["left", 1, 300,300] },
-		       { 
-			 action: "add_cards_to_stack",
-		 	 params: ["left", [8,11,12,24,40,50]] },
-		       { 
-			 action: "move_card",
-		 	 params: ["left", 5, 200,200]},
-		       { 
-			 action: "create_stack",
-		 	 params: ["right","H",530,30,10] },
-		       { 
-			 action: "add_cards_to_stack",
-		 	 params: ["right",[9,18,13,41,42,47]]},
-		       { 
-			 action: "move_card",
-		 	 params: ["right",3,220,200]},
-		       { 
-			 action: "move_stack",
-		 	 params: ["right",530,140]},
-		       { 
-			 action: "create_stack",
-		 	 params: ["south","H",630,30,10] },
-		       { 
-			 action: "add_cards_to_stack",
-		 	 params: ["south",[31,32,33,34,35,36]]},
-		       { 
-			 action: "move_card",
-		 	 params: ["south",3,220,220]},
-		       { 
-			 action: "move_stack",
-		 	 params: ["south",530,240]},
- 		       {  
-			  action: "add_card_to_stack",
-			  params: ["col2",53,"card445",true] }
-
-		      ]};
-		 
-	     },
-	 add_cards_to_stack: function(stack_id,cards_ids){
-	     console.log(cards_ids[0]);
+	 
+	 add_cards_to_stack: function(stack_id,cards_ids,showstack){
 	     for(i=0;i<cards_ids.length; i++){
 		 CP.add_card_to_stack(stack_id,cards_ids[i],'card' + cards_ids[i],true);
+	     }
+	     if (showstack === true ){
+		 CP.show_stack(stack_id);
 	     }
 	 },
 	 move_stack: function(stack_id,px,py){
 	     CP.stacks[stack_id].move_to(px,py);
 	 },
+         // **************************************************************************
+	 /// STACK
+         /// **************************************************************************
 	 create_stack: function(stack_id,stack_type,xpos,ypos,pixdist){
 	     xpos = CP.scale(xpos);
 	     ypos = CP.scale(ypos);
@@ -228,14 +212,15 @@ var CP = ( function(){
 		 y: ypos,
 		 xnext: xpos,
 		 ynext: ypos,
+		 znext: 1,
 		 add_card: function(card){
 		     this.cards[this.cards.length] = card;
-		     card.set_position(this.xnext,this.ynext);
+		     card.set_position(this.xnext,this.ynext,this.znext);
 		     this.update_next_pos();
 		 },
 		 show: function(){
 		     for (var i=0;i< this.cards.length; i++){
-			 this.cards[i].show(i);
+			 this.cards[i].show();
 			 }
 		 },
 		 insert_card: function (atpos) {
@@ -252,15 +237,14 @@ var CP = ( function(){
 		 update_card_position: function(i){
 		     
 		     if(this.tstack === 'V') {
-			 this.cards[i].set_position(this.x,this.dpx*i+this.y);
+			 this.cards[i].set_position(this.x,this.dpx*i+this.y,i);
 		      };
 		     if (this.tstack === 'H') {
-			 this.cards[i].set_position(this.x + this.dpx*i,this.y);
+			 this.cards[i].set_position(this.x + this.dpx*i,this.y,i);
 		     }
 		     if (this.tstack === '0') {
-			 this.cards[i].set_position(this.x,this.y);
+			 this.cards[i].set_position(this.x,this.y,i);
 		     }
-			 
 		 },
 		 remove_card: function(atpos,showstack) {
 		     this.cards.splice(atpos,1);
@@ -269,7 +253,6 @@ var CP = ( function(){
 		     };
 		     this.update_next_pos();
 		     if (showstack === true) {
-			 console.log(showstack);
 			 this.show();
 		     }
 		 },
@@ -305,6 +288,7 @@ var CP = ( function(){
 			 this.ynext = this.y;
 			 this.xnext = this.y;
 		     }
+		     this.znext = this.znext + 1;
 		 },
 		 jump_to:function(xpos,ypos){
 		     xpos = CP.scale(xpos);
@@ -321,9 +305,7 @@ var CP = ( function(){
 			 if (this.tstack === '0'){
 			     this.cards[i].jump_to(xpos,ypos,i);
 			 }
-			 
-			 
-			 }
+		     }
 		     this.update_next_pos();
 		 },
 		 
@@ -334,45 +316,50 @@ var CP = ( function(){
 	     CP.stacks[stack_id] = stack;
 	     return stack;
 	 },
-         create_card: function(card_id,element_id){
+          // ******************************************************************************
+          // ******************************************************************************
+          // CARD 
+          // ******************************************************************************
+          // ******************************************************************************
+
+         create_card: function(card_id){
+	     CP.all_cards[CP.all_cards.length] = card_id;
 	     var card = {
 	         card_id: card_id,
 		 x: 0,
 		 y: 0,
-		 element_id: element_id,
+		 z: 0,
+		 element_id: "card" + CP.all_cards.length ,
 		 selected: true,
-             inspect: function(){
-		 console.log('inspect');
-		 console.log("x: " + this.x + "  " + "y: " + this.y);  
-	     },
              jump_to: function(px,py,pz){
-		 this.set_position(px,py);
-		 this.show(this.parent,pz);
+		 this.set_position(px,py,pz);
+		 this.show();
 	     },
 	     make_div: function() {
 		 if (this.card_id != 53 ) {
-		     return "<div class='card' id='" + element_id + "'>" + divs[card_id-1] +  "</div>";
+		     return "<div class='card' id='" + this.element_id + "'>" + divs[card_id-1] +  "</div>";
 		 } else {
-		     return "<div class='card' id='" + element_id + "'>" + divs[52] +  "</div>";
+		     return "<div class='card' id='" + this.element_id + "'>" + divs[52] +  "</div>";
 		 };
 	     },         
 	     get_div: function() {
-		 return $('#' + element_id);
+		 return $('#' + this.element_id);
 		 },
 	     on_click: function(ele){
 		 alert(JSON.stringify());
 	     },
-             set_position: function(px,py) {
+             set_position: function(px,py,pz){
 		 px = CP.scale(px);
 		 py = CP.scale(py);
 		 this.x = px;
 		 this.y = py;
+		 this.z = pz;
 	     },
-	     show: function(z){
+	     show: function(){
 		 this.get_div().remove();
 		 this.parent = CP.get_table() || this.parent;
 		 this.parent.prepend(this.make_div());
-		 this.get_div().css({position: "absolute"}).css({left:this.x + "px",top:this.y+"px",zIndex:z});
+		 this.get_div().css({position: "absolute"}).css({left:this.x + "px",top:this.y+"px", zIndex:this.z });
 		 if (this.selected){
 		     this.get_div().css({"background-color" : ""});
 		 }
@@ -389,14 +376,15 @@ var CP = ( function(){
 	     move_to: function(px,py,pz) {
 		 px = CP.scale(px);
 		 py = CP.scale(py);
-		 this.get_div().snabbt({ position:[px-this.x, py-this.y ,300],
+		 this.get_div().snabbt({ position:[px-this.x, py-this.y ,this.z],
 					 duration: 500,
 					 delay: 10,
 					 easing: 'spring'
 				         });
-		 this.get_div().css({position: "absolute"}).css({left:this.x + "px",top:this.y+"px",zIndex:pz})
-	         this.x= px;
+		 this.get_div().css({position: "absolute"}).css({left:this.x + "px",top:this.y+"px",zIndex: pz  })
+	         this.x = px;
 		 this.y = py;
+		 this.z = pz;
 	        }
 		
 	     };
@@ -415,7 +403,7 @@ $(document).ready(function(){
     // 	CP.postopone(move,i*300);
     // };
      b = CP.get_passians_data();
-     for ( var i = 0; i<b.moves.length ; i++) {
+    for ( var i = 0; i< b.moves.length ; i++) {
 	move = b.moves[i];
 	CP.postopone(move,i*300);
     };
