@@ -45,7 +45,7 @@ class Card
   end
   
   def cimage
-      ActionController::Base.helpers.image_url("face-#{@@MAJORS[@value_num-10]}-#{@suit.downcase}.png")
+      ActionController::Base.helpers.asset_path("face-#{@@MAJORS[@value_num-10]}-#{@suit.downcase}.png")
   end
 
   def self.make_back
@@ -53,7 +53,7 @@ class Card
     div = 
       "<div class='card-back'>" +
         "  <span class='middle_center'>" +
-        "    <img src='#{ActionController::Base.helpers.image_url("back.png")}'></img>" + 
+        "    <img src='#{ActionController::Base.helpers.asset_path("back.png")}'></img>" + 
         "  </span>" +
       "</div>"
   end

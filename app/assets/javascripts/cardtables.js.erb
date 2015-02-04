@@ -57,8 +57,9 @@ var CP = ( function(){
      ];
      return {
 	 stacks: {},
-	 all_cards: [],
-
+	 all_cards: {},
+	 how_many: 0,
+         // for movie effect
 	 postopone: function(move,time){
 	     setTimeout(function(){ 
 		 CP[move.action].apply(CP,move.params);},time);	     
@@ -68,7 +69,10 @@ var CP = ( function(){
 	     card = CP.stacks[stack_from].cards[i];
 	     CP.move_card(stack_from,i,CP.stacks[stack_to].xnext,CP.stacks[stack_to].ynext,CP.stacks[stack_to].znext);
 	     newstack = CP.stacks[stack_to];
+	     card.stack_id = stack_to;
+	     card.in_stack_pos =newstack.cards.length;
 	     newstack.cards[newstack.cards.length] = card;
+	     newstack.update_next_pos();
 	 },
 
 	 move_card: function(stack_id,i,px,py,pz){
@@ -92,6 +96,7 @@ var CP = ( function(){
 
 	 add_card_to_stack: function(stack_id,card_id,show){
 	     c = CP.create_card(card_id);
+	     c.stack_id = stack_id;
 	     CP.stacks[stack_id].add_card(c);
 	     if (show === true ) {
 		 CP.show_stack(stack_id);
@@ -220,19 +225,63 @@ var CP = ( function(){
 			   params: ["draw",1,"draw_open"]},
        		       {
 			  action: "create_stack",
-  			  params: ["up","V",710,30,100] },
+  			  params: ["up0","0",710,30] },
+       		       {
+			  action: "create_stack",
+  			  params: ["up1","0",710,140] },
+       		       {
+			  action: "create_stack",
+  			  params: ["up2","0",710,250] },
+       		       {
+			  action: "create_stack",
+  			  params: ["up3","0",710,360] },
        		       {
 			   action: "from_stack_move",
-			   params: ["col3",2,"up"]},
+			   params: ["col3",2,"up0"]},
        		       {
 			   action: "flip_card",
 			   params: ["col3",1,28]},
        		       {
 			   action: "from_stack_move",
-			   params: ["draw_open",0,"up"]}
+			   params: ["draw_open",0,"up1"]},
+		       {
+			   action: "add_card_to_stack",
+			   params: ["draw",53]},
+		       {
+			   action: "flip_card",
+			   params: ["draw",1,51]},
+       		       {
+			   action: "from_stack_move",
+			   params: ["draw",1,"draw_open"]},
+       		       {
+			   action: "from_stack_move",
+			   params: ["col5",4,"up0"]},
+       		       {
+			   action: "flip_card",
+			   params: ["col5",3,29]},
+       		       {
+			   action: "from_stack_move",
+			   params: ["col3",1,"up1"]},
+       		       {
+			   action: "flip_card",
+			   params: ["col3",0,37]},
+      		       // {
+		       // 	   action: "insert_card_in_stack",
+		       // 	   params: ["col5",1,0]},
+       		       // {
+		       // 	   action: "insert_card_in_stack",
+		       // 	   params: ["col5",2,2]},
+       		       // {
+		       // 	   action: "insert_card_in_stack",
+		       // 	   params: ["col5",3,6]},
+
 		      ]};
 	 },
-	 
+	 insert_card_in_stack: function(stack_id,card_id,i){
+	     card = CP.create_card(card_id);	     
+	     CP.stacks[stack_id].insert_card(i,card);
+	     CP.stacks[stack_id].cards[i].show();
+	 },
 	 add_cards_to_stack: function(stack_id,cards_ids,showstack){
 	     for(i=0;i<cards_ids.length; i++){
 		 CP.add_card_to_stack(stack_id,cards_ids[i],'card' + cards_ids[i],true);
@@ -247,22 +296,30 @@ var CP = ( function(){
          // **************************************************************************
 	 /// STACK
          /// **************************************************************************
-	 create_stack: function(stack_id,stack_type,xpos,ypos,pixdist){
+	 create_stack: function(stack_id,stack_type,xpos,ypos,pixdist,positions){
 	     xpos = CP.scale(xpos);
 	     ypos = CP.scale(ypos);
-	     pixdist = this.scale(pixdist);
+	     if ( stack_type === "F" ) {
+		 for (var k = 0; k< positions.length; k++){
+		     positions[k] = this.scale(positions[k]);
+		 } 
+	     } else {
+		 pixdist = this.scale(pixdist);
+	     };
 	     var stack = {
 		 id: stack_id,
 		 cards: [],
 		 parent: CP.get_table(),
 		 tstack: stack_type,
 		 dpx: pixdist,
+		 positions: positions,
 		 x: xpos,
 		 y: ypos,
 		 xnext: xpos,
 		 ynext: ypos,
 		 znext: 1,
 		 add_card: function(card){
+		     card.in_stack_pos = this.cards.length;
 		     this.cards[this.cards.length] = card;
 		     card.set_position(this.xnext,this.ynext,this.znext);
 		     this.update_next_pos();
@@ -274,25 +331,28 @@ var CP = ( function(){
 		 },
 
 		 insert_card: function (atpos,card) {
-		     console.log(card.to_s());
+		     console.log("insert card  " + card.to_s());
 		     var new_cards = [];
 		     for ( var i=0;i<this.cards.length;i++){
 			 if (i<atpos) {
-			     new_cards[i] = this.cards[i];
+			         new_cards[i] = this.cards[i];
 			 }  else 
-			     if ( i > atpos) {
+			     if ( i >= atpos) {
+				 console.log(" At " + (i+1) + "   " + this.cards[i].to_s());
 				 new_cards[i+1] = this.cards[i];
 			 }
 	              }
 		     new_cards[atpos] = card;
+		     
 		     this.cards = new_cards;
-		     for (var k=0; k< this.cards.length; k++){
-			 console.log("K" + k );
-			 console.log("Insert" + " "  + this.cards[k].to_s());
+		     
+		     console.log("How many" + this.cards.length);
+		     for ( var k = 0; k < this.cards.length; k++){
+			 this.update_card_position(k).show();
+			 console.log(k);
+			 console.log("IN insert" + this.cards[k].to_s());
 			 this.cards[k].show();
 		     }
-		     this.update_card_position(atpos).show();
-		     
 		 },
 
 		 update_card_position: function(i){
@@ -348,7 +408,7 @@ var CP = ( function(){
 		     }
 		     if (this.tstack === '0') {
 			 this.ynext = this.y;
-			 this.xnext = this.y;
+			 this.xnext = this.x;
 		     }
 		     this.znext = this.znext + 1;
 		 },
@@ -385,14 +445,24 @@ var CP = ( function(){
           // ******************************************************************************
 
          create_card: function(card_id){
-	     CP.all_cards[CP.all_cards.length] = card_id;
 	     var card = {
 	         card_id: card_id,
 		 x: 0,
 		 y: 0,
 		 z: 0,
-		 element_id: "card" + CP.all_cards.length ,
-		 selected: true,
+		 element_id: "card" + CP.how_many ,
+		 selected: false,
+		 stack_id: null,
+	     in_stack_position: function(){
+		 if(this.stack_id === null) {
+		     return null;
+		 };
+		 for ( var i = 0; i<CP.stacks[this.stack_id].cards.length; i++){
+		     if ( CP.stacks[this.stack_id].cards[i].element_id === this.element_id){
+			 return i;
+		     }
+		 };
+	     },
              to_s: function() {
 		 return "id:" + this.card_id;
 	     },
@@ -411,7 +481,15 @@ var CP = ( function(){
 		 return $('#' + this.element_id);
 		 },
 	     on_click: function(ele){
-		 alert(JSON.stringify());
+		 card= CP.all_cards[this.id];
+		 alert(card.stack_id);
+		 alert(card.in_stack_position());
+		 if (card.selected === false ) {
+		     card.select();
+		 } else {
+		     card.deselect();
+		 };
+		 
 	     },
              set_position: function(px,py,pz){
 		 px = CP.scale(px);
@@ -420,17 +498,19 @@ var CP = ( function(){
 		 this.y = py;
 		 this.z = pz;
 	     },
+	     deselect: function(){
+		 this.selected = false;
+		 this.get_div().removeClass("selected");
+	     },
+	     select: function() {
+		 this.selected = true;
+		 this.get_div().addClass("selected");
+		 },	 
 	     show: function(){
 		 this.get_div().remove();
 		 this.parent = CP.get_table() || this.parent;
 		 this.parent.prepend(this.make_div());
 		 this.get_div().css({position: "absolute"}).css({left:this.x + "px",top:this.y+"px", zIndex:this.z });
-		 if (this.selected){
-		     this.get_div().css({"background-color" : ""});
-		 }
-		 else {
-		     this.get_div().css({"background-color" : "white"});
-		 }
 		 this.get_div().click(this.on_click);
 		
 	     },
@@ -449,6 +529,8 @@ var CP = ( function(){
 	        }
 		
 	     };
+	     CP.all_cards[card.element_id] = card;
+	     CP.how_many++;
 	     return card;
 	 }
      };
@@ -458,16 +540,11 @@ var CP = ( function(){
 $(document).ready(function(){
      var ele = $("#cardtable");
      var table = CP.create_table(ele,6); 
-    //  a = CP.get_data();
-    //  for ( var i = 0; i<a.moves.length ; i++) {
-    // 	move = a.moves[i];
-    // 	CP.postopone(move,i*300);
-    // };
      b = CP.get_passians_data();
-    for ( var i = 0; i< b.moves.length ; i++) {
+     for ( var i = 0; i< b.moves.length ; i++) {
 	move = b.moves[i];
 	CP.postopone(move,i*300);
-    };
+     };
 
 
 });
