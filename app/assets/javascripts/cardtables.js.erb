@@ -12,6 +12,7 @@ var CP = ( function(){
 
 	 from_stack_move: function(stack_from,i,stack_to){
 	     card = CP.stacks[stack_from].cards[i];
+	     console.log(card.info());
 	     CP.move_card(stack_from,i,CP.stacks[stack_to].xnext,CP.stacks[stack_to].ynext,CP.stacks[stack_to].znext);
 	     newstack = CP.stacks[stack_to];
 	     card.stack_id = stack_to;
@@ -19,7 +20,19 @@ var CP = ( function(){
 	     newstack.cards[newstack.cards.length] = card;
 	     newstack.update_next_pos();
 	 },
-
+	 create_stack: function(stack_id,
+				stack_type,
+				xpos,
+				ypos,
+				pixdist,
+				positions){
+	     this.stacks[stack_id] = Stack.create(stack_id,
+					     stack_type,
+					     xpos,
+					     ypos,
+					     pixdist,
+					     positions,this.get_table());
+	 },
 	 move_card: function(stack_id,i,px,py,pz){
 	     CP.stacks[stack_id].cards[i].move_to(px,py,pz);
 	     CP.stacks[stack_id].remove_card(i,true);
@@ -228,153 +241,7 @@ var CP = ( function(){
 	 },
 	 move_stack: function(stack_id,px,py){
 	     CP.stacks[stack_id].move_to(px,py);
-	 },
-         // **************************************************************************
-	 /// STACK
-         /// **************************************************************************
-	 create_stack: function(stack_id,stack_type,xpos,ypos,pixdist,positions){
-	     xpos = CP.scale(xpos);
-	     ypos = CP.scale(ypos);
-	     if ( stack_type === "F" ) {
-		 for (var k = 0; k< positions.length; k++){
-		     positions[k] = this.scale(positions[k]);
-		 } 
-	     } else {
-		 pixdist = this.scale(pixdist);
-	     };
-	     var stack = {
-		 id: stack_id,
-		 cards: [],
-		 parent: CP.get_table(),
-		 tstack: stack_type,
-		 dpx: pixdist,
-		 positions: positions,
-		 x: xpos,
-		 y: ypos,
-		 xnext: xpos,
-		 ynext: ypos,
-		 znext: 1,
-		 add_card: function(card){
-		     card.in_stack_pos = this.cards.length;
-		     this.cards[this.cards.length] = card;
-		     card.set_position(this.xnext,this.ynext,this.znext);
-		     this.update_next_pos();
-		 },
-		 show: function(){
-		     for (var i=0;i< this.cards.length; i++){
-			 this.cards[i].show(this.parent);
-			 }
-		 },
-
-		 insert_card: function (atpos,card) {
-		     console.log("insert card  " + card.to_s());
-		     var new_cards = [];
-		     for ( var i=0;i<this.cards.length;i++){
-			 if (i<atpos) {
-			         new_cards[i] = this.cards[i];
-			 }  else 
-			     if ( i >= atpos) {
-				 console.log(" At " + (i+1) + "   " + this.cards[i].to_s());
-				 new_cards[i+1] = this.cards[i];
-			 }
-	              }
-		     new_cards[atpos] = card;
-		     
-		     this.cards = new_cards;
-		     
-		     console.log("How many" + this.cards.length);
-		     for ( var k = 0; k < this.cards.length; k++){
-			 this.update_card_position(k).show(this.parent);
-			 console.log(k);
-			 console.log("IN insert" + this.cards[k].to_s());
-			 this.cards[k].show(this.parent);
-		     }
-		 },
-
-		 update_card_position: function(i){
-		     
-		     if(this.tstack === 'V') {
-			 this.cards[i].set_position(this.x,this.dpx*i+this.y,i);
-		      };
-		     if (this.tstack === 'H') {
-			 this.cards[i].set_position(this.x + this.dpx*i,this.y,i);
-		     }
-		     if (this.tstack === '0') {
-			 this.cards[i].set_position(this.x,this.y,i);
-		     }
-		     return this.cards[i];
-		 },
-		 remove_card: function(atpos,showstack) {
-		     this.cards.splice(atpos,1);
-		     for(var i=atpos; i< this.cards.length; i++){
-			 this.update_card_position(i);
-		     };
-		     this.update_next_pos();
-		     if (showstack === true) {
-			 this.show();
-		     }
-		 },
-		 move_to:function(xpos,ypos){
-		     xpos = CP.scale(xpos);
-		     ypos = CP.scale(ypos);
-		     this.x = xpos;
-		     this.y = ypos;
-		     for (var i=0;i< this.cards.length; i++){
-			 if ( this.tstack === 'H' ) {
-			     this.cards[i].move_to(xpos+this.dpx*i,ypos,i);
-			 }
-			 if ( this.tstack === 'V' ) {
-			     this.cards[i].move_to(xpos,this.dpx*i+ypos,i);
-			 }
-			 if (this.tstack === '0'){
-			     this.cards[i].move_to(xpos,ypos,i);
-			 }
-		     }
-		     this.update_next_pos();  
-		 },
-		
-		 update_next_pos: function(){
-		     if (this.tstack === 'H' ) {
-			 this.xnext = this.x + this.cards.length*this.dpx;
-			 this.ynext = this.y;
-		     }
-		     if (this.tstack === 'V') {
-			 this.ynext = this.y + this.cards.length*this.dpx;
-			 this.xnext = this.x;
-		     }
-		     if (this.tstack === '0') {
-			 this.ynext = this.y;
-			 this.xnext = this.x;
-		     }
-		     this.znext = this.znext + 1;
-		 },
-		 jump_to:function(xpos,ypos){
-		     xpos = CP.scale(xpos);
-		     ypos = CP.scale(ypos);
-		     this.x = xpos;
-		     this.y = ypos;
-		     for (var i=0;i< this.cards.length; i++){
-			 if (this.tstack === 'H'){
-			     this.cards[i].jump_to(xpos+this.dpx*i,ypos,i);
-			 }
-			 if (this.tstack === 'V'){
-			     this.cards[i].jump_to(xpos,this.dpx*i+ypos,i);
-			 }
-			 if (this.tstack === '0'){
-			     this.cards[i].jump_to(xpos,ypos,i);
-			 }
-		     }
-		     this.update_next_pos();
-		 },
-		 
-		 get_card: function(i) {
-		     return this.cards[i];
-		 }
-	     };
-	     CP.stacks[stack_id] = stack;
-	     return stack;
-	 },
-
+	 }
      };
  }());
 

@@ -13,4 +13,8 @@
 //= require jquery
 //= require jquery_ujs
 //= require turbolinks
-//= require_tree .
+//= require card
+//= require stack
+//= require cardtables
+//= require snabbt.min
+
