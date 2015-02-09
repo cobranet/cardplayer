@@ -65,8 +65,11 @@ var divs = [
 		 element_id: "card" + how_many ,
 		 selected: false,
 		 stack_id: null,
+		 in_stack_pos: null,
+		 stack_id: null,
              info: function (){
-		 return "Card id:" + card_id + " at (" + this.x + "," + this.y + "," + this.z +")";
+		 return "Card id:" + this.card_id + " at (" + this.x + "," + this.y + "," + this.z +")" 
+		     + "Stack " + this.stack_id + " @ " + this.in_stack_pos ;
 	     },		 
              to_s: function() {
 		 return "id:" + this.card_id;
@@ -90,7 +93,7 @@ var divs = [
 		 } else {
 		     card.deselect();
 		 };
-		 
+		 alert(card.info());
 	     },
              set_position: function(px,py,pz){
 		 this.x = px;

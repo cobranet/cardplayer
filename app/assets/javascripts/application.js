@@ -13,6 +13,7 @@
 //= require jquery
 //= require jquery_ujs
 //= require turbolinks
+//= require pubsub
 //= require card
 //= require stack
 //= require cardtables

@@ -19,6 +19,7 @@ var CP = ( function(){
 	     card.in_stack_pos =newstack.cards.length;
 	     newstack.cards[newstack.cards.length] = card;
 	     newstack.update_next_pos();
+	     CP.stacks[stack_to]=newstack;
 	 },
 	 create_stack: function(stack_id,
 				stack_type,
@@ -53,9 +54,11 @@ var CP = ( function(){
 	 },
 
 	 add_card_to_stack: function(stack_id,card_id,show){
+	     console.log(stack_id);
 	     c = Cards.create_card(card_id);
 	     c.stack_id = stack_id;
 	     CP.stacks[stack_id].add_card(c);
+	     console.log(c.info());
 	     if (show === true ) {
 		 CP.show_stack(stack_id);
 	     }
@@ -177,7 +180,7 @@ var CP = ( function(){
        		       
 		       {
 			   action: "flip_card",
-			   params: ["draw",1,27]},
+			   params: ["draw",1,17]},
        		       {
 			   action: "from_stack_move",
 			   params: ["draw",1,"draw_open"]},
@@ -252,7 +255,7 @@ $(document).ready(function(){
      b = CP.get_passians_data();
      for ( var i = 0; i< b.moves.length ; i++) {
 	move = b.moves[i];
-	CP.postopone(move,i*300);
+	CP.postopone(move,i*100);
      };
 
 

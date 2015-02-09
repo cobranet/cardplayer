@@ -28,6 +28,7 @@ var Stack =( function(){
 		 znext: 1,
 		 add_card: function(card){
 		     card.in_stack_pos = this.cards.length;
+		     card.stack_id = this.id;
 		     this.cards[this.cards.length] = card;
 		     card.set_position(this.xnext,this.ynext,this.znext);
 		     this.update_next_pos();
@@ -39,15 +40,20 @@ var Stack =( function(){
 		 },
 		 insert_card: function (atpos,card) {
 		     var new_cards = [];
+		     
 		     for ( var i=0;i<this.cards.length;i++){
 			 if (i < atpos) {
 			         new_cards[i] = this.cards[i];
+
 			 }  else 
 			     if ( i >= atpos) {
 				 new_cards[i+1] = this.cards[i];
+				 new_cards[i+1].in_stack_pos=[i+1];
 			 }
 	              }
 		     new_cards[atpos] = card;
+		     new_cards[atpos].in_stack_pos = atpos;
+		     new_cards[atpos].stack_id = this.id;
 		     this.cards = new_cards;
 		     for ( var k = 0; k < this.cards.length; k++){
 			 this.update_card_position(k).show(this.parent);
@@ -68,8 +74,11 @@ var Stack =( function(){
 		     return this.cards[i];
 		 },
 		 remove_card: function(atpos,showstack) {
-		     this.cards.splice(atpos,1);
+		     this.cards[atpos].in_stack_pos = null;
+		     this.cards[atpos].stack_id = null;
+		     this.cards.splice(atpos,1);		     
 		     for(var i=atpos; i< this.cards.length; i++){
+			 this.cards[i].in_stack_pos = this.cards[i].in_stack_pos-1;
 			 this.update_card_position(i);
 		     };
 		     this.update_next_pos();
